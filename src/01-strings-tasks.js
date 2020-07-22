@@ -205,8 +205,21 @@ function extractEmails(str) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+function getRectangleString(width, height) {
+  const res = [];
+  for (let i = 0; i < height; i += 1) {
+    if (i === 0) {
+      const line = `┌${'─'.repeat(width - 2)}┐\n`;
+      res.push(line);
+    } else if (i === height - 1) {
+      const line = `└${'─'.repeat(width - 2)}┘\n`;
+      res.push(line);
+    } else {
+      const line = `│${' '.repeat(width - 2)}│\n`;
+      res.push(line);
+    }
+  }
+  return res.join('');
 }
 
 
@@ -226,9 +239,26 @@ function getRectangleString(/* width, height */) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  const charcodeA = 'A'.charCodeAt(0);
+  const charcodeSmallA = 'a'.charCodeAt(0);
+
+  const res = [];
+  str.split('').forEach((val) => {
+    const charcode = val.charCodeAt(0);
+    if (charcode < charcodeA + 26 && charcode >= charcodeA) {
+      const charNew = charcodeA + ((charcode - charcodeA + 13) % 26);
+      res.push(String.fromCharCode(charNew));
+    } else if (charcode < charcodeSmallA + 26 && charcode >= charcodeSmallA) {
+      const charNew = charcodeSmallA + ((charcode - charcodeSmallA + 13) % 26);
+      res.push(String.fromCharCode(charNew));
+    } else {
+      res.push(val);
+    }
+  });
+  return res.join('');
 }
+
 
 /**
  * Returns true if the value is string; otherwise false.
@@ -243,15 +273,15 @@ function encodeToRot13(/* str */) {
  *   isString('test') => true
  *   isString(new String('test')) => true
  */
-function isString(/* value */) {
-  throw new Error('Not implemented');
+function isString(value) {
+  return typeof (value) === 'string' || value instanceof String;
 }
 
 
 /**
  * Returns playid card id.
  *
- * Playing cards inittial deck inclides the cards in the following order:
+ * Playing cards initial desk includes the cards in the following order:
  *
  *  'A♣','2♣','3♣','4♣','5♣','6♣','7♣','8♣','9♣','10♣','J♣','Q♣','K♣',
  *  'A♦','2♦','3♦','4♦','5♦','6♦','7♦','8♦','9♦','10♦','J♦','Q♦','K♦',
@@ -272,8 +302,14 @@ function isString(/* value */) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const row = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  const column = ['♣', '♦', '♥', '♠'];
+
+  const xIdx = row.indexOf(value.slice(0, -1));
+  const yIdx = column.indexOf(value.slice(-1));
+  const res = yIdx * row.length + xIdx;
+  return res;
 }
 
 
