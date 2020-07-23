@@ -36,8 +36,7 @@ function getRectangleArea(width, height) {
  *   0    => 0
  */
 function getCicleCircumference(radius) {
-  const PI = 3.14159265358979323846;
-  return PI * 2 * radius;
+  return Math.PI * 2 * radius;
 }
 
 /**
@@ -71,8 +70,10 @@ function getAverage(/* value1, value2 */) {
  *   (0,0) (1,0)    => 1
  *   (-5,0) (10,-10) => 18.027756377319946
  */
-function getDistanceBetweenPoints(/* x1, y1, x2, y2 */) {
-  throw new Error('Not implemented');
+function getDistanceBetweenPoints(x1, y1, x2, y2) {
+  const a = (x2 - x1) * (x2 - x1);
+  const b = (y2 - y1) * (y2 - y1);
+  return Math.sqrt(Math.abs(a + b));
 }
 
 /**
@@ -87,8 +88,8 @@ function getDistanceBetweenPoints(/* x1, y1, x2, y2 */) {
  *   x + 8 = 0       => -8
  *   5*x = 0         => 0
  */
-function getLinearEquationRoot(/* a, b */) {
-  throw new Error('Not implemented');
+function getLinearEquationRoot(a, b) {
+  return (0 - b) / a;
 }
 
 
@@ -110,8 +111,12 @@ function getLinearEquationRoot(/* a, b */) {
  *   (0,1) (0,1)     => 0
  *   (0,1) (1,2)     => 0
  */
-function getAngleBetweenVectors(/* x1, y1, x2, y2 */) {
-  throw new Error('Not implemented');
+function getAngleBetweenVectors(x1, y1, x2, y2) {
+  const dotProduct = x1 * x2 + y1 * y2;
+  const magnitudeA = Math.sqrt(x1 * x1 + y1 * y1);
+  const magnitudeB = Math.sqrt(x2 * x2 + y2 * y2);
+  const cosin = dotProduct / (Math.abs(magnitudeA) * Math.abs(magnitudeB));
+  return Math.acos(cosin);
 }
 
 /**
