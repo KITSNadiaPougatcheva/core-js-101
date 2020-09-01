@@ -64,8 +64,9 @@ function getFactorial(n) {
  *   5,10  =>  45 ( = 5+6+7+8+9+10 )
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
-function getSumBetweenNumbers(/* n1, n2 */) {
-  throw new Error('Not implemented');
+function getSumBetweenNumbers(n1, n2) {
+  const arr = Array(n2 - n1 + 1).fill(0).map((item, idx) => n1 + idx);
+  return arr.reduce((acc, item) => acc + item, 0);
 }
 
 
@@ -84,8 +85,9 @@ function getSumBetweenNumbers(/* n1, n2 */) {
  *   10,1,1   =>  false
  *   10,10,10 =>  true
  */
-function isTriangle(/* a, b, c */) {
-  throw new Error('Not implemented');
+function isTriangle(a, b, c) {
+  if (a + b <= c || b + c <= a || a + c <= b) return false;
+  return true;
 }
 
 
