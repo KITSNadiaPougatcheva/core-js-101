@@ -270,8 +270,21 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const arr = ccn.toString().split('');
+
+  const step2arr = arr.reverse().reduce((acc, item, idx) => {
+    if (idx % 2) {
+      const doubled = item * 2;
+      acc.push(doubled > 9 ? doubled - 9 : doubled);
+    } else {
+      acc.push(Number(item));
+    }
+    return acc;
+  }, []);
+  const step3sum = step2arr.reduce((acc, item) => acc + item, 0);
+
+  return !(step3sum % 10);
 }
 
 /**
@@ -288,8 +301,13 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const arr = num.toString().split('');
+  const sum = arr.reduce((acc, item) => acc + Number(item), 0);
+  if (sum > 9) {
+    return getDigitalRoot(sum);
+  }
+  return sum;
 }
 
 
@@ -314,10 +332,35 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
-}
+function isBracketsBalanced(str) {
+  const reverseMap = {
+    ']': '[',
+    '}': '{',
+    '>': '<',
+    ')': '(',
+  };
 
+  const arr = str.split('');
+  const stack = [];
+  for (let idx = 0; idx < arr.length; idx += 1) {
+    const item = arr[idx];
+    if (stack.length > 0) {
+      const prev = stack.slice(-1);
+      if (reverseMap[item]) {
+        if (reverseMap[item] === prev[0]) {
+          stack.pop();
+        } else {
+          stack.push(item);
+        }
+      } else {
+        stack.push(item);
+      }
+    } else {
+      stack.push(item);
+    }
+  }
+  return !stack.length;
+}
 
 /**
  * Returns the string with n-ary (binary, ternary, etc, where n <= 10)
@@ -339,8 +382,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -356,8 +399,22 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const arr = pathes.map((item) => item.split('/'));
+  const firstLine = arr.splice(1, 1)[0];
+  const commonParts = [];
+  if (pathes.length > 1) {
+    for (let idx = 0; idx < firstLine.length; idx += 1) {
+      const term = firstLine[idx];
+      const includes = !arr.some((item) => item[idx] !== term);
+      if (!includes) break;
+      commonParts.push(term);
+    }
+    // eslint-disable-next-line no-nested-ternary
+    return commonParts.length === 1 && commonParts[0] === '' ? '/' : (commonParts.length > 1 ? `${commonParts.join('/')}/` : '');
+  }
+  if (pathes.length > 0) return pathes[0];
+  return '/';
 }
 
 
