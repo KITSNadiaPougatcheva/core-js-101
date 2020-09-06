@@ -436,8 +436,22 @@ function getCommonDirectoryPath(pathes) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const height = m1.length;
+  const width = m2[0].length;
+
+  const resArr = Array(height).fill(null);
+  for (let idx = 0; idx < height; idx += 1) {
+    resArr[idx] = Array(width).fill(null);
+    const m1Line = m1[idx];
+    for (let jdx = 0; jdx < width; jdx += 1) {
+      resArr[idx][jdx] = m1Line.reduce((acc, item, kdx) => {
+        const res = item * m2[kdx][jdx];
+        return acc + res;
+      }, 0);
+    }
+  }
+  return resArr;
 }
 
 
@@ -471,8 +485,18 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const lookForActor = (x) => {
+    const indexes = [0, 1, 2];
+    const inLine = position.some((line) => indexes.every((idx) => line[idx] === x));
+    // eslint-disable-next-line max-len
+    const inColumn = indexes.some((idx) => indexes.every((jdx) => position[jdx][idx] === x));
+    const inDiagonal = position[1][1] === x && ((position[0][0] === x && position[2][2] === x)
+      || (position[0][2] === x && position[2][0] === x));
+    return inLine || inColumn || inDiagonal;
+  };
+  const res = ['X', '0'].find((x) => lookForActor(x));
+  return res;
 }
 
 
