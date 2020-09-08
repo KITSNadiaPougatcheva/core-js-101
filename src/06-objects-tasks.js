@@ -55,9 +55,6 @@ function getJSON(obj) {
  */
 function fromJSON(proto, json) {
   const o = JSON.parse(json);
-  // eslint-disable-next-line no-proto
-  // o.__proto__ = proto;
-
   Object.setPrototypeOf(o, proto);
   return o;
 }
@@ -117,36 +114,132 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
+
+class MyCssSelector {
+  constructor() {
+    this.order = ['myElement', 'myId', 'myClasses', 'myAttr', 'myPseudoClasses', 'myPseudoElement'];
+    this.myClasses = [];
+    this.myPseudoClasses = [];
+    this.subBuilders = [];
+    return this;
+  }
+
+  checkAfterElemsExist(name) {
+    const idx = this.order.indexOf(name);
+    const arr = this.order.slice(idx + 1);
+    const found = arr.find((item) => this[item] && this[item].length);
+    if (found) throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+  }
+
+  combine(selector1, combinator, selector2) {
+    this.subBuilders.push(selector1, combinator, selector2);
+    return this;
+  }
+
+  element(elem) {
+    this.checkAfterElemsExist('myElement');
+    if (this.myElement) throw new Error('/Element, id and pseudo-element should not occur more then one time inside the selector/');
+    this.myElement = elem;
+    return this;
+  }
+
+  getElement() {
+    return this.myElement || '';
+  }
+
+  id(val) {
+    this.checkAfterElemsExist('myId');
+    if (this.myId) throw new Error('/Element, id and pseudo-element should not occur more then one time inside the selector/');
+    this.myId = val;
+    return this;
+  }
+
+  getId() {
+    return this.myId ? `#${this.myId}` : '';
+  }
+
+  attr(val) {
+    this.checkAfterElemsExist('myAttr');
+    this.myAttr = val;
+    return this;
+  }
+
+  getAttr() {
+    return this.myAttr ? `[${this.myAttr}]` : '';
+  }
+
+  pseudoClass(val) {
+    this.checkAfterElemsExist('myPseudoClasses');
+    this.myPseudoClasses.push(val);
+    return this;
+  }
+
+  getPseudoClass() {
+    return this.myPseudoClasses.reduce((acc, cl) => `${acc}:${cl}`, '');
+  }
+
+  pseudoElement(val) {
+    if (this.myPseudoElement) throw new Error('/Element, id and pseudo-element should not occur more then one time inside the selector/');
+    this.myPseudoElement = val;
+    return this;
+  }
+
+  getPseudoElement() {
+    return this.myPseudoElement ? `::${this.myPseudoElement}` : '';
+  }
+
+  class(val) {
+    this.checkAfterElemsExist('myClasses');
+    this.myClasses.push(val);
+    return this;
+  }
+
+  getClass() {
+    const classes = this.myClasses.reduce((acc, cl) => `${acc}.${cl}`, '');
+    return classes;
+  }
+
+  stringify() {
+    if (this.subBuilders.length) {
+      const result = this.subBuilders.reduce((acc, item) => {
+        const res = item instanceof MyCssSelector ? item.stringify() : item.toString();
+        return `${acc.length ? ` ${acc}` : ''} ${res}`;
+      }, '') || '';
+      return result.trim();
+    }
+    return `${this.getElement()}${this.getId()}${this.getClass()}${this.getAttr()}${this.getPseudoClass()}${this.getPseudoElement()}`;
+  }
+}
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  element(val) {
+    return new MyCssSelector().element(val);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(val) {
+    return new MyCssSelector().id(val);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(val) {
+    return new MyCssSelector().class(val);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(val) {
+    return new MyCssSelector().attr(val);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(val) {
+    return new MyCssSelector().pseudoClass(val);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(val) {
+    return new MyCssSelector().pseudoElement(val);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    return new MyCssSelector().combine(selector1, combinator, selector2);
   },
 };
-
 
 module.exports = {
   Rectangle,
